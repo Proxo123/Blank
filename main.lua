@@ -34,6 +34,7 @@ local Window = Library:CreateWindow{
 
 local MODULE_LIST = {
     "example",
+    "movement",
 }
 
 local loadedModules = {}
