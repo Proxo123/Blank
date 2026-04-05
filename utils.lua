@@ -1,6 +1,7 @@
 local Utils = {}
 
 Utils.BASE_URL = ""
+Utils.Env = nil
 
 function Utils.httpGet(path)
     local url = Utils.BASE_URL .. path

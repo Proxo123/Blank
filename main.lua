@@ -4,9 +4,13 @@ local Library = loadstring(game:HttpGet("https://github.com/ActualMasterOogway/F
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/SaveManager.luau", true))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/InterfaceManager.luau", true))()
 
+local envSource = game:HttpGet(BASE_URL .. "env.lua", true)
+local Env = loadstring(envSource)()
+
 local utilsSource = game:HttpGet(BASE_URL .. "utils.lua", true)
 local Utils = loadstring(utilsSource)()
 Utils.BASE_URL = BASE_URL
+Utils.Env = Env
 
 local Window = Library:CreateWindow{
     Title = "My Script",
@@ -38,7 +42,7 @@ end
 
 for name, mod in pairs(loadedModules) do
     if type(mod.init) == "function" then
-        local ok, err = pcall(mod.init, Window, Library, Utils)
+        local ok, err = pcall(mod.init, Window, Library, Utils, Env)
         if not ok then
             warn("[Main] Module init error (" .. name .. "): " .. tostring(err))
         end
@@ -65,9 +69,10 @@ SaveManager:BuildConfigSection(SettingsTab)
 
 Window:SelectTab(1)
 
+local envReport = Env.getReport()
 Library:Notify{
     Title = "My Script",
-    Content = "Loaded successfully — " .. #MODULE_LIST .. " module(s).",
+    Content = "Loaded " .. #MODULE_LIST .. " module(s) on " .. envReport.executor .. " (" .. envReport.missingCount .. " missing fn).",
     Duration = 5
 }
 

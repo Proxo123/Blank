@@ -1,6 +1,6 @@
 local module = {}
 
-function module.init(Window, Library, Utils)
+function module.init(Window, Library, Utils, Env)
     local Tab = Window:CreateTab{
         Title = "Player",
         Icon = "phosphor-user-bold"
