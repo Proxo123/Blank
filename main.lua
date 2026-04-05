@@ -1,16 +1,13 @@
-local BASE_URL = ... or "https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/"
+local BASE_URL = ... or "https://raw.githubusercontent.com/Proxo123/Blank/main/"
 
---// Load Fluent Renewed + Addons
 local Library = loadstring(game:HttpGet("https://github.com/ActualMasterOogway/Fluent-Renewed/releases/latest/download/Fluent.luau", true))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/SaveManager.luau", true))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/InterfaceManager.luau", true))()
 
---// Load Utils
 local utilsSource = game:HttpGet(BASE_URL .. "utils.lua", true)
 local Utils = loadstring(utilsSource)()
 Utils.BASE_URL = BASE_URL
 
---// Create Window
 local Window = Library:CreateWindow{
     Title = "My Script",
     SubTitle = "v1.0.0",
@@ -23,16 +20,10 @@ local Window = Library:CreateWindow{
     MinimizeKey = Enum.KeyCode.RightControl
 }
 
---// ========================================
---// MODULE REGISTRY
---// Add module file names here (without path prefix).
---// Each must be inside the modules/ folder on GitHub.
---// ========================================
 local MODULE_LIST = {
     "example",
 }
 
---// Load Modules
 local loadedModules = {}
 
 for _, name in ipairs(MODULE_LIST) do
@@ -45,7 +36,6 @@ for _, name in ipairs(MODULE_LIST) do
     end
 end
 
---// Initialize Modules (each gets the Window, Library, and Utils)
 for name, mod in pairs(loadedModules) do
     if type(mod.init) == "function" then
         local ok, err = pcall(mod.init, Window, Library, Utils)
@@ -57,7 +47,6 @@ for name, mod in pairs(loadedModules) do
     end
 end
 
---// Settings Tab (always last)
 local SettingsTab = Window:CreateTab{
     Title = "Settings",
     Icon = "settings"
@@ -74,10 +63,8 @@ SaveManager:SetFolder("MyScript/config")
 InterfaceManager:BuildInterfaceSection(SettingsTab)
 SaveManager:BuildConfigSection(SettingsTab)
 
---// Select the first tab
 Window:SelectTab(1)
 
---// Ready notification
 Library:Notify{
     Title = "My Script",
     Content = "Loaded successfully — " .. #MODULE_LIST .. " module(s).",

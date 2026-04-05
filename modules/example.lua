@@ -7,9 +7,8 @@ function module.init(Window, Library, Utils)
     }
 
     local Options = Library.Options
-
-    --// Walk Speed
     local DEFAULT_SPEED = 16
+    local DEFAULT_JUMP = 50
 
     Tab:CreateSlider("WalkSpeed", {
         Title = "Walk Speed",
@@ -26,9 +25,6 @@ function module.init(Window, Library, Utils)
         end
     })
 
-    --// Jump Power
-    local DEFAULT_JUMP = 50
-
     Tab:CreateSlider("JumpPower", {
         Title = "Jump Power",
         Description = "Adjust your character's jump power",
@@ -44,7 +40,6 @@ function module.init(Window, Library, Utils)
         end
     })
 
-    --// Infinite Jump
     local infJumpConnection = nil
 
     Tab:CreateToggle("InfiniteJump", {
@@ -67,7 +62,6 @@ function module.init(Window, Library, Utils)
         end
     })
 
-    --// Noclip
     local noclipEnabled = false
     local noclipConnection = nil
 
@@ -99,7 +93,6 @@ function module.init(Window, Library, Utils)
         end
     })
 
-    --// Reset Speed & Jump
     Tab:CreateButton{
         Title = "Reset Defaults",
         Description = "Reset walk speed and jump power to normal",

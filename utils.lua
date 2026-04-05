@@ -1,6 +1,6 @@
 local Utils = {}
 
-Utils.BASE_URL = "" -- set by main.lua at init
+Utils.BASE_URL = ""
 
 function Utils.httpGet(path)
     local url = Utils.BASE_URL .. path
