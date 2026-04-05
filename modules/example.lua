@@ -6,105 +6,51 @@ function module.init(Window, Library, Utils, Env)
         Icon = "phosphor-user-bold"
     }
 
-    local Options = Library.Options
-    local DEFAULT_SPEED = 16
-    local DEFAULT_JUMP = 50
-
-    Tab:CreateSlider("WalkSpeed", {
-        Title = "Walk Speed",
-        Description = "Adjust your character's walk speed",
-        Default = DEFAULT_SPEED,
-        Min = 0,
-        Max = 200,
-        Rounding = 0,
-        Callback = function(value)
-            local humanoid = Utils.getHumanoid()
-            if humanoid then
-                humanoid.WalkSpeed = value
-            end
-        end
-    })
-
-    Tab:CreateSlider("JumpPower", {
-        Title = "Jump Power",
-        Description = "Adjust your character's jump power",
-        Default = DEFAULT_JUMP,
-        Min = 0,
-        Max = 500,
-        Rounding = 0,
-        Callback = function(value)
-            local humanoid = Utils.getHumanoid()
-            if humanoid then
-                humanoid.JumpPower = value
-            end
-        end
-    })
-
-    local infJumpConnection = nil
-
-    Tab:CreateToggle("InfiniteJump", {
-        Title = "Infinite Jump",
-        Default = false,
-        Callback = function(value)
-            if value then
-                infJumpConnection = game:GetService("UserInputService").JumpRequest:Connect(function()
-                    local humanoid = Utils.getHumanoid()
-                    if humanoid then
-                        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    end
-                end)
-            else
-                if infJumpConnection then
-                    infJumpConnection:Disconnect()
-                    infJumpConnection = nil
-                end
-            end
-        end
-    })
-
-    local noclipEnabled = false
-    local noclipConnection = nil
-
-    Tab:CreateToggle("Noclip", {
-        Title = "Noclip",
-        Description = "Walk through walls",
-        Default = false,
-        Callback = function(value)
-            noclipEnabled = value
-            if value then
-                noclipConnection = game:GetService("RunService").Stepped:Connect(function()
-                    if noclipEnabled then
-                        local char = Utils.getCharacter()
-                        if char then
-                            for _, part in ipairs(char:GetDescendants()) do
-                                if part:IsA("BasePart") then
-                                    part.CanCollide = false
-                                end
-                            end
-                        end
-                    end
-                end)
-            else
-                if noclipConnection then
-                    noclipConnection:Disconnect()
-                    noclipConnection = nil
-                end
-            end
-        end
-    })
-
     Tab:CreateButton{
-        Title = "Reset Defaults",
-        Description = "Reset walk speed and jump power to normal",
+        Title = "Environment Info",
+        Description = "Dump executor, player, and game details to dev console (F9)",
         Callback = function()
-            local humanoid = Utils.getHumanoid()
-            if humanoid then
-                humanoid.WalkSpeed = DEFAULT_SPEED
-                humanoid.JumpPower = DEFAULT_JUMP
+            local report = Env.getReport()
+            local player = Utils.getPlayer()
+
+            local lines = {
+                "========== ENVIRONMENT ==========",
+                "Executor: " .. report.executor,
+                "Missing Functions: " .. report.missingCount,
+                "Drawing: " .. tostring(report.hasDrawing),
+                "Filesystem: " .. tostring(report.hasFilesystem),
+                "Hooking: " .. tostring(report.hasHooking),
+                "Metatable Access: " .. tostring(report.hasMetatableAccess),
+                "Input Control: " .. tostring(report.hasInputControl),
+                "Connections: " .. tostring(report.hasConnections),
+                "Teleport Queue: " .. tostring(report.hasTeleportQueue),
+                "",
+                "========== PLAYER ==========",
+                "Username: " .. player.Name,
+                "Display Name: " .. player.DisplayName,
+                "User ID: " .. tostring(player.UserId),
+                "Account Age: " .. tostring(player.AccountAge) .. " days",
+                "Membership: " .. tostring(player.MembershipType),
+                "",
+                "========== GAME ==========",
+                "Place ID: " .. tostring(game.PlaceId),
+                "Game ID: " .. tostring(game.GameId),
+                "Job ID: " .. game.JobId,
+            }
+
+            if report.missingCount > 0 then
+                table.insert(lines, "")
+                table.insert(lines, "========== MISSING FUNCTIONS ==========")
+                for _, fn in ipairs(report.missing) do
+                    table.insert(lines, "  - " .. fn)
+                end
             end
-            Options.WalkSpeed:SetValue(DEFAULT_SPEED)
-            Options.JumpPower:SetValue(DEFAULT_JUMP)
-            Utils.notify(Library, "Player", "Reset to defaults.")
+
+            for _, line in ipairs(lines) do
+                print(line)
+            end
+
+            Utils.notify(Library, "Info", "Printed to dev console (F9)", 5)
         end
     }
 end
